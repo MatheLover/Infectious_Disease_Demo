@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<title>Home Page</title>
+</head>
+<body>
+
+<h1>Infectious Disease Visualization System</h1>
+
+<form action="file:///Users/benchiang/Infectious_Disease_Prototype/home.html">
+    <input type="submit" value="Home" />
+</form>
+
+<form action="file:///Users/benchiang/Infectious_Disease_Prototype/about.html">
+	<input type="submit" value="About" />
+</form>
+
+
+
+<select onchange="disease_select(this.value)">
+	<option disabled selected>Select one</option>
+	<option value="COVID_19.html">COVID-19</option>
+	<option value="Malaria.html">Malaria</option>
+</select>
+
+<script>
+	function disease_select(src)
+	{
+		window.location = src;
+	}
+</script>
+</body>
+</html>
