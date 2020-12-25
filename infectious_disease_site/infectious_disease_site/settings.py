@@ -31,6 +31,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'malaria.apps.MalariaConfig',
+    'covid19.apps.Covid19Config',
     'homepage.apps.HomepageConfig',
     'django.contrib.admin',
     'django.contrib.auth',

@@ -21,4 +21,6 @@ from . import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('homepage/', include('homepage.urls')),
+    path('malaria/', include('malaria.urls')),
+    # path('covid19', include('covid19.urls')),
 ]
