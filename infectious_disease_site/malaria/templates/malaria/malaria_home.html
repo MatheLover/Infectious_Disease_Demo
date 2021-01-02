@@ -6,6 +6,24 @@
     <link rel="stylesheet" type="text/css" href="http://cdn.pydata.org/bokeh/release/bokeh-2.2.3.min.css"/>
     <link rel="stylesheet" type="text/css" href="http://cdn.pydata.org/bokeh/release/bokeh-widgets-2.2.3.min.css"/>
     <link rel="stylesheet" type="text/css" href="http://cdn.pydata.org/bokeh/release/bokeh-tables-2.2.3.min.css"/>
+
+    <script type="text/javascript">
+       function resetFilter() {
+            var dropdownCountry = document.getElementById("Country");
+            var dropdownStartYear = document.getElementById("starting_year");
+            var dropdownEndYear = document.getElementById("end_year");
+            dropdownCountry.selectedIndex = 0;
+            dropdownStartYear.selectedIndex = 0;
+            dropdownEndYear.selectedIndex = 0;
+       }
+
+       function applyFilter(){
+            document.getElementById("Country").style.display = "none";
+            document.getElementById("starting_year").style.display = "none";
+            document.getElementById("end_year").style.display = "none";
+       }
+
+    </script>
 </head>
 <body>
 <center>
@@ -274,7 +292,7 @@
    <option value="Zimbabwe">Zimbabwe</option>
     </select>
      <select id="starting_year" name="starting_year">
-	<option disabled selected>Select starting year</option>
+	<option disabled="true" selected>Select starting year</option>
 
     <option value="2010">2010</option>
     <option value="2011">2011</option>
@@ -287,7 +305,7 @@
     <option value="2018">2018</option>
 </select>
      <select id="end_year" name="end_year">
-	  <option disabled selected>Select ending year</option>
+	  <option disabled="true" selected>Select ending year</option>
 
       <option value="2010">2010</option>
       <option value="2011">2011</option>
@@ -300,8 +318,9 @@
       <option value="2018">2018</option>
     </select>
 
-     <input type="submit" value="Submit Query" />
+     <input type="submit" value="Submit Query" onclick="applyFilter();" />
     </form>
+    <input type="button" id="buttonReset" value="Reset" onclick="resetFilter();" />
     <table border="1">
      {% for result in Malaria %}
      <tr>
@@ -314,6 +333,8 @@
      </tr>
      {% endfor %}
      </table>
+
+
 
 </center>
 </body>
