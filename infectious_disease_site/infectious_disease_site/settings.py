@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'import_export',
     'malaria.apps.MalariaConfig',
     'covid19.apps.Covid19Config',
     'homepage.apps.HomepageConfig',
@@ -79,7 +80,7 @@ WSGI_APPLICATION = 'infectious_disease_site.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': '/Users/benchiang/Desktop/MalariaData/who_data/sqlite3.db',
     }
 }
 
@@ -115,6 +116,8 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
+IMPORT_EXPORT_USE_TRANSACTIONS = True
 
 
 # Static files (CSS, JavaScript, Images)
