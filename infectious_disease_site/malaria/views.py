@@ -35,16 +35,29 @@ def malaria_home_view(request):
         for death in result.values_list('Deaths'):
             deaths_list.append(death)
 
-        plot1 = figure(x_range=year_list, plot_width=800, plot_height=400)
+        plot1 = figure(title="Number of Population at Risk by Year in " + country_filter, x_range=year_list,
+                       plot_width=800, plot_height=400)
+        plot1.left[0].formatter.use_scientific = False
         plot1.line(year_list, population_list, line_width=2)
-        plot2 = figure(x_range=year_list, plot_width=800, plot_height=400)
-        plot2.line(year_list, cases_list, line_width=2)
-        plot3 = figure(x_range=year_list, plot_width=800, plot_height=400)
+
+        plot2 = figure(title="Number of Cases by Year in " + country_filter, x_range=year_list, plot_width=800,
+                       plot_height=400)
+        plot2.left[0].formatter.use_scientific = False
+        plot2.vbar(year_list, width=0.5, bottom=0, top=cases_list, color="firebrick")
+
+        plot3 = figure(title="Number of Estimated Deaths by Year in " + country_filter, x_range=year_list,
+                       plot_width=800, plot_height=400)
+        plot3.left[0].formatter.use_scientific = False
         plot3.line(year_list, deaths_list, line_width=2)
-        script, div = components({"Population_at_risk": plot1, "Cases": plot2, "Deaths": plot3})
-        return render(request, 'malaria/malaria_home.html', {"Malaria": result, 'script': script, 'div': div})
 
-    else:
-        result = Malaria.objects.all()
+        script1, div1 = components(plot1)
+        script2, div2 = components(plot2)
+        script3, div3 = components(plot3)
+        context = {'Malaria': result, 'script1': script1, 'div1': div1, 'script2': script2, 'div2': div2, 'script3': script3, 'div3': div3}
 
-    return render(request, 'malaria/malaria_home.html', {"Malaria": result})
+        return render(request, 'malaria/malaria_home.html', context)
+
+    #else:
+        #result = Malaria.objects.all()
+
+    return render(request, 'malaria/malaria_home.html')

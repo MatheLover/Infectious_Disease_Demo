@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Malari Home Page</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Malaria Home Page</title>
+
+    <!-- Bootstrap CSS file -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
 
     <link rel="stylesheet" type="text/css" href="http://cdn.pydata.org/bokeh/release/bokeh-2.2.3.min.css"/>
     <link rel="stylesheet" type="text/css" href="http://cdn.pydata.org/bokeh/release/bokeh-widgets-2.2.3.min.css"/>
@@ -17,31 +22,37 @@
             dropdownEndYear.selectedIndex = 0;
        }
 
-       function applyFilter(){
-            document.getElementById("Country").style.display = "none";
-            document.getElementById("starting_year").style.display = "none";
-            document.getElementById("end_year").style.display = "none";
+
+
+       function validateInput() {
+            var selected_Country = document.getElementById("Country").value;
+            var selected_Start_Year = document.getElementById("starting_year").value;
+            var selected_End_Year = document.getElementById("end_year").value;
+            var isEmp = (selected_Country == "Select one country or region") || (selected_Start_Year == "Select starting year") || (selected_End_Year == "Select ending year")
+
+            if(isEmp) {
+                  alert("Country, start year, or end year should not be null");
+                  return false;
+            }
+
        }
 
     </script>
 </head>
 <body>
-<center>
+   <div class="container-xl">
+   <center>
+    <div class="jumbotron">
+      <h1>Infectious Disease Visualization System (Malaria)</h1>
+      <hr>
+      <a href="http://127.0.0.1:8000/homepage/home.html" class="btn btn-info" role="button">Home</a>
+       <a href="http://127.0.0.1:8000/homepage/about.html" class="btn btn-info" role="button">About</a>
 
-    <h1>Malaria Visualization System</h1>
+    </div>
 
-    <form action='http://127.0.0.1:8000/homepage/home.html'>
-        <input type="submit" value="Home" />
-    </form>
-
-    <form action='http://127.0.0.1:8000/homepage/about.html'>
-        <input type="submit" value="About" />
-    </form>
-
-    {{div| safe}}
-
+    <hr/>
     <!--Select Country, starting year, and end year -->
-    <form action="{% url 'malaria_home' %}" method="get">
+    <form action="{% url 'malaria_home' %}" onsubmit="return validateInput()" method="get">
      <select id="Country" name="Country" >
    <option disabled="true" selected>Select one country or region</option>
    <option value="Afganistan">Afghanistan</option>
@@ -318,10 +329,21 @@
       <option value="2018">2018</option>
     </select>
 
-     <input type="submit" value="Submit Query" onclick="applyFilter();" />
+     <input type="submit" value="Submit Query"/>
     </form>
+    <hr>
     <input type="button" id="buttonReset" value="Reset" onclick="resetFilter();" />
+    <hr>
     <table border="1">
+       <tr>
+         <td>Region</td>
+         <td>Country</td>
+         <td>Year</td>
+         <td>Population at risk</td>
+         <td>Case Number</td>
+         <td>Deaths</td>
+       </tr>
+
      {% for result in Malaria %}
      <tr>
       <td>{{result.WHO_region}}</td>
@@ -333,14 +355,29 @@
      </tr>
      {% endfor %}
      </table>
+    {{div1| safe}}
+    {{div2| safe}}
+    {{div3| safe}}
+
+    <hr/>
 
 
 
-</center>
+
+
+   </center>
+   <!-- JS files: jQuery first, then Popper.js, then Bootstrap JS -->
+   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+   </div>
+
 </body>
     <script type="text/javascript" src="http://cdn.pydata.org/bokeh/release/bokeh-2.2.3.min.js"></script>
     <script type="text/javascript" src="http://cdn.pydata.org/bokeh/release/bokeh-widgets-2.2.3.min.js"></script>
     <script type="text/javascript" src="http://cdn.pydata.org/bokeh/release/bokeh-tables-2.2.3.min.js"></script>
     <script type="text/javascript" src="http://cdn.pydata.org/bokeh/release/bokeh-api-2.2.3.min.js"></script>
-    {{script | safe}}
+    {{script1 | safe}}
+    {{script2 | safe}}
+    {{script3 | safe}}
 </html>
