@@ -6,6 +6,7 @@ from bokeh.plotting import figure
 import pandas as pd
 import folium
 
+
 # Create your views here.
 def malaria_home_view(request):
     if request.GET.get("Country"):
@@ -55,11 +56,10 @@ def malaria_home_view(request):
         script1, div1 = components(plot1)
         script2, div2 = components(plot2)
         script3, div3 = components(plot3)
-        context = {'Malaria': result, 'script1': script1, 'div1': div1, 'script2': script2, 'div2': div2, 'script3': script3, 'div3': div3}
+        context = {'Malaria': result, 'script1': script1, 'div1': div1, 'script2': script2, 'div2': div2,
+                   'script3': script3, 'div3': div3}
 
         return render(request, 'malaria/malaria_home.html', context)
-
-
 
     return render(request, 'malaria/malaria_home.html')
 
@@ -67,8 +67,10 @@ def malaria_home_view(request):
 def malaria_map_view(request):
     return render(request, 'malaria/malaria_map.html')
 
+
 def malaria_annual_stat_view(request):
     return render(request, 'malaria/malaria_annual_stat.html')
+
 
 def malaria_annual_stat_map_view(request):
     year_list = []
@@ -92,7 +94,6 @@ def malaria_annual_stat_map_view(request):
             death_map_list.append(m.Deaths)
             pop_map_list.append(m.Population_at_risk)
 
-
         latlon = zip(lat_list, lon_list, name_list, case_map_list, death_map_list, pop_map_list, year_list)
         zipped_latlon = list(latlon)
 
@@ -104,7 +105,6 @@ def malaria_annual_stat_map_view(request):
                    + """<br>Deaths """ + str(co[6]) + """: """ + str(co[4]) \
                    + """<br>Population at risk """ + str(co[6]) + """: """ + str(co[5])
 
-
             iframe = folium.IFrame(html,
                                    width=400,
                                    height=100)
@@ -113,53 +113,74 @@ def malaria_annual_stat_map_view(request):
                                  max_width=500)
             folium.Marker(location=[co[0], co[1]], popup=popup).add_to(map_demo)
 
+        map_demo.save("malaria/malaria_annual_stat_map.html")
+        map_demo = map_demo._repr_html_()
+        context = {
+            'map_demo': map_demo
+        }
 
+        return render(request, 'malaria/malaria_annual_stat_map.html', context)
 
+    elif request.GET.get("Year"):
+        year_selected = request.GET.get("Year")
+        result = Malaria.objects.filter(Year=year_selected)
 
+        for m in result:
+            year_list.append(m.Year)
+            lat_list.append(m.Latitude)
+            lon_list.append(m.Longitude)
+            name_list.append(m.Country)
 
+        featured_Group = folium.FeatureGroup(name="Malaria Map")
+        map_demo = folium.Map(min_zoom=2, max_bounds=True, tiles='cartodbpositron')
+        for lat, lon, name in zip(lat_list, lon_list, name_list):
+            featured_Group.add_child(folium.Marker(location=[lat, lon], popup=name))
+        map_demo.add_child(featured_Group)
 
-    # for m in result:
-    #     lat_list.append(m.Latitude)
-    #     lon_list.append(m.Longitude)
-    #     name_list.append(m.Country)
-    #     case_map_list.append(m.Cases)
-    #     death_map_list = [m.Deaths]
-    #     pop_map_list = [m.Population_at_risk]
-    #
-    # # Combine data
-    # country_case = zip(name_list, case_map_list, death_map_list, pop_map_list)
-    # zipped_country_case = list(country_case)
-    # df = pd.DataFrame(data=zipped_country_case, columns=['Country', 'Cases'])
-    #
-    # map_demo = folium.Map(min_zoom=2, max_bounds=True, tiles='cartodbpositron')
-    # #map_demo.save(outfile='malaria_annual_stat_map.html')
-    #
-    # geojson = "/Users/benchiang/Desktop/countries.geojson"
-    # g = folium.GeoJson(
-    #     geojson,
-    #     name=geojson
-    # ).add_to(map_demo)
-    #
-    # # Choropleth Map
-    # folium.Choropleth(
-    #     geo_data=geojson,
-    #     name="choropleth",
-    #     data=df,
-    #     columns=["Country", "Cases"],
-    #     key_on="feature.properties.ADMIN",
-    #     fill_color="Set2",
-    #     fill_opacity=0.7,
-    #     line_opacity=0.2,
-    #     legend_name="Case Number",
-    #     bins=6,
-    #     reset=True,
-    #
-    # ).add_to(map_demo)
+        # for m in result:
+        #     lat_list.append(m.Latitude)
+        #     lon_list.append(m.Longitude)
+        #     name_list.append(m.Country)
+        #     case_map_list.append(m.Cases)
+        #     death_map_list = [m.Deaths]
+        #     pop_map_list = [m.Population_at_risk]
+        #
+        # # Combine data
+        # country_case = zip(name_list, case_map_list, death_map_list, pop_map_list)
+        # zipped_country_case = list(country_case)
+        # df = pd.DataFrame(data=zipped_country_case, columns=['Country', 'Cases'])
+        #
+        # map_demo = folium.Map(min_zoom=2, max_bounds=True, tiles='cartodbpositron')
+        # #map_demo.save(outfile='malaria_annual_stat_map.html')
+        #
+        # geojson = "/Users/benchiang/Desktop/countries.geojson"
+        # g = folium.GeoJson(
+        #     geojson,
+        #     name=geojson
+        # ).add_to(map_demo)
+        #
+        # # Choropleth Map
+        # folium.Choropleth(
+        #     geo_data=geojson,
+        #     name="choropleth",
+        #     data=df,
+        #     columns=["Country", "Cases"],
+        #     key_on="feature.properties.ADMIN",
+        #     fill_color="Set2",
+        #     fill_opacity=0.7,
+        #     line_opacity=0.2,
+        #     legend_name="Case Number",
+        #     bins=6,
+        #     reset=True,
+        #
+        # ).add_to(map_demo)
 
         map_demo.save("malaria/malaria_annual_stat_map.html")
         map_demo = map_demo._repr_html_()
         context = {
-         'map_demo': map_demo
+            'map_demo': map_demo
         }
 
         return render(request, 'malaria/malaria_annual_stat_map.html', context)
+
+    return render(request, 'malaria/malaria_annual_stat_map.html')

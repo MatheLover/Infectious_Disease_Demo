@@ -12,6 +12,16 @@
     <link rel="stylesheet" type="text/css" href="http://cdn.pydata.org/bokeh/release/bokeh-widgets-2.2.3.min.css"/>
     <link rel="stylesheet" type="text/css" href="http://cdn.pydata.org/bokeh/release/bokeh-tables-2.2.3.min.css"/>
 
+    <script>
+        function resetFilter() {
+            var dropdownCountry = document.getElementById("Country");
+            var dropdownYear = document.getElementById("Year");
+            dropdownCountry.selectedIndex = 0;
+            dropdownYear.selectedIndex = 0;
+
+       }
+    </script>
+
 </head>
 <body>
 <div class="container-xl">
@@ -26,11 +36,11 @@
 
 
         </div>
-        <!--Select Country, starting year, and end year -->
+
         <form target="_blank" action="{% url 'malaria_annual_stat_map' %}" onsubmit="return validateInput()" method="get">
             <select id="Country" name="Country">
                 <option disabled="true" selected>Select one country or region</option>
-                <option value="Afganistan">Afghanistan</option>
+                <option value="Afghanistan">Afghanistan</option>
                 <option value="Albania">Albania</option>
                 <option value="Algeria">Algeria</option>
                 <option value="American Samoa">American Samoa</option>
@@ -178,7 +188,7 @@
                 <option value="Morocco">Morocco</option>
                 <option value="Mozambique">Mozambique</option>
                 <option value="Myanmar">Myanmar</option>
-                <option value="Nambia">Nambia</option>
+                <option value="Namibia">Namibia</option>
                 <option value="Nauru">Nauru</option>
                 <option value="Nepal">Nepal</option>
                 <option value="Netherland Antilles">Netherland Antilles</option>
@@ -277,7 +287,7 @@
                 <option value="Zambia">Zambia</option>
                 <option value="Zimbabwe">Zimbabwe</option>
             </select>
-            <select id="year" name="Year">
+            <select id="Year" name="Year">
                 <option disabled="true" selected>Select specific year</option>
 
                 <option value="2010">2010</option>
