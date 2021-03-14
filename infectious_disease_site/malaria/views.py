@@ -137,43 +137,7 @@ def malaria_annual_stat_map_view(request):
             featured_Group.add_child(folium.Marker(location=[lat, lon], popup=name))
         map_demo.add_child(featured_Group)
 
-        # for m in result:
-        #     lat_list.append(m.Latitude)
-        #     lon_list.append(m.Longitude)
-        #     name_list.append(m.Country)
-        #     case_map_list.append(m.Cases)
-        #     death_map_list = [m.Deaths]
-        #     pop_map_list = [m.Population_at_risk]
-        #
-        # # Combine data
-        # country_case = zip(name_list, case_map_list, death_map_list, pop_map_list)
-        # zipped_country_case = list(country_case)
-        # df = pd.DataFrame(data=zipped_country_case, columns=['Country', 'Cases'])
-        #
-        # map_demo = folium.Map(min_zoom=2, max_bounds=True, tiles='cartodbpositron')
-        # #map_demo.save(outfile='malaria_annual_stat_map.html')
-        #
-        # geojson = "/Users/benchiang/Desktop/countries.geojson"
-        # g = folium.GeoJson(
-        #     geojson,
-        #     name=geojson
-        # ).add_to(map_demo)
-        #
-        # # Choropleth Map
-        # folium.Choropleth(
-        #     geo_data=geojson,
-        #     name="choropleth",
-        #     data=df,
-        #     columns=["Country", "Cases"],
-        #     key_on="feature.properties.ADMIN",
-        #     fill_color="Set2",
-        #     fill_opacity=0.7,
-        #     line_opacity=0.2,
-        #     legend_name="Case Number",
-        #     bins=6,
-        #     reset=True,
-        #
-        # ).add_to(map_demo)
+
 
         map_demo.save("malaria/malaria_annual_stat_map.html")
         map_demo = map_demo._repr_html_()
@@ -184,3 +148,10 @@ def malaria_annual_stat_map_view(request):
         return render(request, 'malaria/malaria_annual_stat_map.html', context)
 
     return render(request, 'malaria/malaria_annual_stat_map.html')
+
+def malaria_cumulative_stat_view(request):
+    return render(request, 'malaria/malaria_cumulative_stat.html')
+
+def malaria_cumulative_stat_map_view(request):
+    return render(request, 'malaria/malaria_cumulative_stat_map.html')
+

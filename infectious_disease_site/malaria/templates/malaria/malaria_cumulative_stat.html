@@ -12,22 +12,42 @@
     <link rel="stylesheet" type="text/css" href="http://cdn.pydata.org/bokeh/release/bokeh-widgets-2.2.3.min.css"/>
     <link rel="stylesheet" type="text/css" href="http://cdn.pydata.org/bokeh/release/bokeh-tables-2.2.3.min.css"/>
 
+    <script>
+        function resetFilter() {
+            var dropdownFeature = document.getElementById("Feature");
+            dropdownFeature.selectedIndex = 0;
+
+       }
+    </script>
+
 </head>
 <body>
-    <div class="container-xl">
+<div class="container-xl">
     <center>
         <div class="jumbotron">
             <h1>Infectious Disease Visualization System (Malaria)</h1>
             <hr>
             <a href="http://127.0.0.1:8000/homepage/home.html" class="btn btn-info" role="button">Home</a>
             <a href="http://127.0.0.1:8000/homepage/about.html" class="btn btn-info" role="button">About</a>
-            <a href="http://127.0.0.1:8000/malaria/malaria_map.html" class="btn btn-info" role="button">Malaria Statistics Mapping</a>
+            <a href="http://127.0.0.1:8000/malaria/malaria_map.html" class="btn btn-info" role="button">Malaria
+                Statistics Mapping</a>
 
 
         </div>
-          <a href="http://127.0.0.1:8000/malaria/malaria_annual_stat.html" class="btn btn-info" role="button">Annual Statistics</a>
-          <a href="http://127.0.0.1:8000/malaria/malaria_cumulative_stat.html" class="btn btn-info" role="button">Cumulative Statistics(Choropleth Map)</a>
+
+        <form target="_blank" action="{% url 'malaria_annual_stat_map' %}" onsubmit="return validateInput()" method="get">
+            <select id="Feature" name="Feature">
+                <option disabled="true" selected>Select Feature to generate Choropleth Map</option>
+                <option value="Cases">Cases</option>
+                <option value="Population_at_risk">Population_at_risk</option>
+                <option value="Deaths">Deaths</option>
+            </select>
+            <input type="submit" value="Submit Query"/>
+            <input type="button" id="buttonReset" value="Reset" onclick="resetFilter();"/>
+        </form>
     </center>
-    </div>
+</div>
+
+
 </body>
 </html>
