@@ -61,3 +61,7 @@ def malaria_home_view(request):
         #result = Malaria.objects.all()
 
     return render(request, 'malaria/malaria_home.html')
+
+
+def malaria_map_view(request):
+    return render(request, 'malaria/malaria_map.html')
