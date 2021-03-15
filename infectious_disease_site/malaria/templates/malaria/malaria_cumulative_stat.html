@@ -35,7 +35,7 @@
 
         </div>
 
-        <form target="_blank" action="{% url 'malaria_annual_stat_map' %}" onsubmit="return validateInput()" method="get">
+        <form target="_blank" action="{% url 'malaria_cumulative_stat_map' %}" onsubmit="return validateInput()" method="get">
             <select id="Feature" name="Feature">
                 <option disabled="true" selected>Select Feature to generate Choropleth Map</option>
                 <option value="Cases">Cases</option>
