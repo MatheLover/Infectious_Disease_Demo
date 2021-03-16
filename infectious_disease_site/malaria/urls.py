@@ -13,6 +13,13 @@ urlpatterns = [
     path('malaria_rainfall.html', views.malaria_rainfall_view,
          name='malaria_rainfall_map'),
     path('malaria_rainfall_map.html', views.malaria_rainfall_map_view,
-         name='malaria_rainfall_map')
+         name='malaria_rainfall_map'),
+
+    path('malaria_socioeconomic_factor.html', views.malaria_socioeconomic_factor_view,
+         name='malaria_socioeconomic_factor'),
+
+    path('malaria_gdp_per_capita.html', views.malaria_gdp_per_capita_view, name='malaria_gdp_per_capita'),
+
+
 
 ]
