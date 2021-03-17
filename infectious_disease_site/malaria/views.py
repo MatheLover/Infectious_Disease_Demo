@@ -695,3 +695,118 @@ def malaria_gdp_per_capita_view(request):
         return render(request, 'malaria/malaria_gdp_per_capita.html')
     return render(request, 'malaria/malaria_gdp_per_capita.html')
 
+
+def malaria_pct_agri_pop_view(request):
+    if request.GET.get("GraphType") == "Scatterplot":
+        country_filter = request.GET.get("Country")
+        result = Malaria.objects.filter(Q(Country=country_filter))
+
+        # Prepare data for the graphs
+        population_list = []
+        cases_list = []
+        deaths_list = []
+        pct_list = []
+
+        for population in result.values_list('Population_at_risk'):
+            population_list.append(population)
+
+        for case in result.values_list('Cases'):
+            cases_list.append(case)
+
+        for death in result.values_list('Deaths'):
+            deaths_list.append(death)
+
+        for pct in result.values_list('Rural_pop_pct'):
+            pct_list.append(pct)
+
+        # Line graph for percentage of agricultural population over the years
+        year_list_pct = ['2010','2011','2012','2013','2014','2015', '2016', '2017', '2018']
+        plot_pct = figure(title="GDP per capita in " + country_filter, x_range=year_list_pct,
+                       plot_width=800, plot_height=400)
+        plot_pct.left[0].formatter.use_scientific = False
+        plot_pct.line(year_list_pct, pct_list, line_width=2)
+        script_pct,div_pct = components(plot_pct)
+
+
+        # Scatter plot for population at risk vs percentage of agricultural population
+        x_scatter_pct = pct_list
+        y_scatter_pop = population_list
+
+        scatter_plot_1 = figure(plot_width=700, plot_height=700, x_axis_label='Percentage of Agricultural Population (Percentage)',
+                              y_axis_label='Number of population at risk in ' + country_filter)
+        scatter_plot_1.circle(x_scatter_pct, y_scatter_pop, size=10, line_color="navy", fill_color="orange",
+                            fill_alpha=0.5)
+        scatter_plot_1.left[0].formatter.use_scientific = False
+
+        # Best-fit Line for population at risk vs gdp
+        d = pandas.DataFrame(x_scatter_pct)
+        d1 = pandas.DataFrame(y_scatter_pop)
+        x = np.array(d[0])
+        y = np.array(d1[0])
+
+        par = np.polyfit(x, y, 1, full=True)
+        slope = par[0][0]
+        intercept = par[0][1]
+        y_predicted_pop = [slope * i + intercept for i in x]
+        scatter_plot_1.line(x, y_predicted_pop, color='red')
+        script_pop, div_pop = components(scatter_plot_1)
+
+        ####### Split Line
+        # Scatter plot for case vs gdp
+        x_scatter_pct = pct_list
+        y_scatter_case = cases_list
+
+        scatter_plot_2 = figure(plot_width=700, plot_height=700, x_axis_label='Percentage of Agricultural Population (Percentage)',
+                                y_axis_label='Number of cases in ' + country_filter)
+        scatter_plot_2.circle(x_scatter_pct, y_scatter_case, size=10, line_color="navy", fill_color="orange",
+                              fill_alpha=0.5)
+        scatter_plot_2.left[0].formatter.use_scientific = False
+
+        # Best-fit Line for population at risk vs gdp
+        d = pandas.DataFrame(x_scatter_pct)
+        d1 = pandas.DataFrame(y_scatter_case)
+        x = np.array(d[0])
+        y = np.array(d1[0])
+
+        par = np.polyfit(x, y, 1, full=True)
+        slope = par[0][0]
+        intercept = par[0][1]
+        y_predicted_case = [slope * i + intercept for i in x]
+        scatter_plot_2.line(x, y_predicted_case, color='red')
+        script_case, div_case = components(scatter_plot_2)
+
+        ####### Split Line
+        # Scatter plot for deaths vs Percentage of Agricultural Population (Percentage)
+        x_scatter_pct = pct_list
+        y_scatter_death = deaths_list
+
+        scatter_plot_3 = figure(plot_width=700, plot_height=700, x_axis_label='Percentage of Agricultural Population (Percentage)',
+                                y_axis_label='Number of deaths in ' + country_filter)
+        scatter_plot_3.circle(x_scatter_pct, y_scatter_death, size=10, line_color="navy", fill_color="orange",
+                              fill_alpha=0.5)
+        scatter_plot_3.left[0].formatter.use_scientific = False
+
+        # Best-fit Line for population at risk vs gdp
+        d = pandas.DataFrame(x_scatter_pct)
+        d1 = pandas.DataFrame(y_scatter_death)
+        x = np.array(d[0])
+        y = np.array(d1[0])
+
+        par = np.polyfit(x, y, 1, full=True)
+        slope = par[0][0]
+        intercept = par[0][1]
+        y_predicted_death = [slope * i + intercept for i in x]
+        scatter_plot_3.line(x, y_predicted_death, color='red')
+        script_death, div_death = components(scatter_plot_3)
+
+        context = {'Malaria': result, 'script_pop': script_pop, 'div_pop': div_pop, 'script_case': script_case, 'div_case': div_case,
+                   'script_death': script_death, 'div_death': div_death, 'script_gdp': script_pct,'div_gdp': div_pct
+                   }
+
+
+
+        return render(request, 'malaria/malaria_pct_agri_pop.html', context)
+    elif request.GET.get("GraphType") == "Map":
+        return render(request, 'malaria/malaria_pct_agri_pop.html')
+    return render(request, 'malaria/malaria_pct_agri_pop.html')
+
