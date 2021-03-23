@@ -86,7 +86,7 @@ def malaria_annual_stat_map_view(request):
     case_map_list = []
     death_map_list = []
     pop_map_list = []
-    if request.GET.get("Year") and request.GET.get("Country"):
+    if request.GET.get("Year") and (request.GET.get("Country") != "World"):
         country_selected = request.GET.get("Country")
         year_selected = request.GET.get("Year")
         result = Malaria.objects.filter(Q(Year=year_selected) & Q(Country=country_selected))
@@ -127,7 +127,7 @@ def malaria_annual_stat_map_view(request):
 
         return render(request, 'malaria/malaria_annual_stat_map.html', context)
 
-    elif request.GET.get("Year"):
+    elif request.GET.get("Year") and (request.GET.get("Country") == "World"):
         year_selected = request.GET.get("Year")
         result = Malaria.objects.filter(Year=year_selected)
 
@@ -136,12 +136,28 @@ def malaria_annual_stat_map_view(request):
             lat_list.append(m.Latitude)
             lon_list.append(m.Longitude)
             name_list.append(m.Country)
+            case_map_list.append(m.Cases)
+            death_map_list.append(m.Deaths)
+            pop_map_list.append(m.Population_at_risk)
 
-        featured_Group = folium.FeatureGroup(name="Malaria Map")
+        latlon = zip(lat_list, lon_list, name_list, case_map_list, death_map_list, pop_map_list, year_list)
+        zipped_latlon = list(latlon)
+
         map_demo = folium.Map(min_zoom=2, max_bounds=True, tiles='cartodbpositron')
-        for lat, lon, name in zip(lat_list, lon_list, name_list):
-            featured_Group.add_child(folium.Marker(location=[lat, lon], popup=name))
-        map_demo.add_child(featured_Group)
+
+        for co in zipped_latlon:
+            html = """Country: """ + co[2] \
+                   + """<br>Case Number in """ + str(co[6]) + """: """ + str(co[3]) \
+                   + """<br>Deaths """ + str(co[6]) + """: """ + str(co[4]) \
+                   + """<br>Population at risk """ + str(co[6]) + """: """ + str(co[5])
+
+            iframe = folium.IFrame(html,
+                                   width=400,
+                                   height=100)
+
+            popup = folium.Popup(iframe,
+                                 max_width=500)
+            folium.Marker(location=[co[0], co[1]], popup=popup).add_to(map_demo)
 
         map_demo.save("malaria/malaria_annual_stat_map.html")
         map_demo = map_demo._repr_html_()
