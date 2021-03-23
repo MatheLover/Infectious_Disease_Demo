@@ -176,6 +176,8 @@ def malaria_cumulative_stat_view(request):
 
 def malaria_cumulative_stat_map_view(request):
     obtained_feature = request.GET.get("Feature")
+    obtained_country = request.GET.get("Country")
+
     if obtained_feature == "Cases":
         slider_name_list = []
         slider_case_list = []
@@ -183,15 +185,27 @@ def malaria_cumulative_stat_map_view(request):
         slider_lon_list = []
         slider_year_list = []
 
-        for m in Malaria.objects.all():
-            slider_lat_list.append(m.Latitude)
-            slider_lon_list.append(m.Longitude)
-            slider_name_list.append(m.Country)
-            slider_case_list.append(m.Cases)
-            year = str(m.Year)
-            if year != '2010':
-                year = year + '/12/31'
-            slider_year_list.append(year)
+        if obtained_country == "World":
+            for m in Malaria.objects.all():
+                slider_lat_list.append(m.Latitude)
+                slider_lon_list.append(m.Longitude)
+                slider_name_list.append(m.Country)
+                slider_case_list.append(m.Cases)
+                year = str(m.Year)
+                if year != '2010':
+                    year = year + '/12/31'
+                slider_year_list.append(year)
+
+        else:
+            for m in Malaria.objects.filter(Country=obtained_country):
+                slider_lat_list.append(m.Latitude)
+                slider_lon_list.append(m.Longitude)
+                slider_name_list.append(m.Country)
+                slider_case_list.append(m.Cases)
+                year = str(m.Year)
+                if year != '2010':
+                    year = year + '/12/31'
+                slider_year_list.append(year)
 
         country_case = zip(slider_name_list, slider_case_list, slider_year_list)
         slider_zipped_country_case = list(country_case)
@@ -270,15 +284,27 @@ def malaria_cumulative_stat_map_view(request):
         slider_lon_list = []
         slider_year_list = []
 
-        for m in Malaria.objects.all():
-            slider_lat_list.append(m.Latitude)
-            slider_lon_list.append(m.Longitude)
-            slider_name_list.append(m.Country)
-            slider_pop_list.append(m.Population_at_risk)
-            year = str(m.Year)
-            if year != '2010':
-                year = year + '/12/31'
-            slider_year_list.append(year)
+        if obtained_country == "World":
+            for m in Malaria.objects.all():
+                slider_lat_list.append(m.Latitude)
+                slider_lon_list.append(m.Longitude)
+                slider_name_list.append(m.Country)
+                slider_pop_list.append(m.Population_at_risk)
+                year = str(m.Year)
+                if year != '2010':
+                    year = year + '/12/31'
+                slider_year_list.append(year)
+
+        else:
+            for m in Malaria.objects.filter(Country=obtained_country):
+                slider_lat_list.append(m.Latitude)
+                slider_lon_list.append(m.Longitude)
+                slider_name_list.append(m.Country)
+                slider_pop_list.append(m.Population_at_risk)
+                year = str(m.Year)
+                if year != '2010':
+                    year = year + '/12/31'
+                slider_year_list.append(year)
 
         country_case = zip(slider_name_list, slider_pop_list, slider_year_list)
         slider_zipped_country_case = list(country_case)
@@ -354,15 +380,26 @@ def malaria_cumulative_stat_map_view(request):
         slider_lon_list = []
         slider_year_list = []
 
-        for m in Malaria.objects.all():
-            slider_lat_list.append(m.Latitude)
-            slider_lon_list.append(m.Longitude)
-            slider_name_list.append(m.Country)
-            slider_death_list.append(m.Deaths)
-            year = str(m.Year)
-            if year != '2010':
-                year = year + '/12/31'
-            slider_year_list.append(year)
+        if obtained_country == "World":
+            for m in Malaria.objects.all():
+                slider_lat_list.append(m.Latitude)
+                slider_lon_list.append(m.Longitude)
+                slider_name_list.append(m.Country)
+                slider_death_list.append(m.Deaths)
+                year = str(m.Year)
+                if year != '2010':
+                    year = year + '/12/31'
+                slider_year_list.append(year)
+        else:
+            for m in Malaria.objects.filter(Country=obtained_country):
+                slider_lat_list.append(m.Latitude)
+                slider_lon_list.append(m.Longitude)
+                slider_name_list.append(m.Country)
+                slider_death_list.append(m.Deaths)
+                year = str(m.Year)
+                if year != '2010':
+                    year = year + '/12/31'
+                slider_year_list.append(year)
 
         country_case = zip(slider_name_list, slider_death_list, slider_year_list)
         slider_zipped_country_case = list(country_case)
@@ -455,15 +492,14 @@ def malaria_rainfall_map_view(request):
             pop_map_list.append(m.Population_at_risk)
             rainfall_list.append(m.Rainfall_gauge)
 
-
         latlon = zip(name_list, rainfall_list)
         zipped_latlon = list(latlon)
 
-        df = pd.DataFrame(data=zipped_latlon, columns=['Country','Rainfall_gauge'])
+        df = pd.DataFrame(data=zipped_latlon, columns=['Country', 'Rainfall_gauge'])
 
-
-        map_demo = folium.Map(min_zoom=2, max_bounds=True, tiles='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery'
-                                          '/MapServer/tile/{z}/{y}/{x}', attr='My Map Data Attribution')
+        map_demo = folium.Map(min_zoom=2, max_bounds=True,
+                              tiles='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery'
+                                    '/MapServer/tile/{z}/{y}/{x}', attr='My Map Data Attribution')
 
         geojson = "/Users/benchiang/Desktop/countries.geojson"
         g = folium.GeoJson(
@@ -476,7 +512,7 @@ def malaria_rainfall_map_view(request):
             geo_data=geojson,
             name="choropleth",
             data=df,
-            columns=["Country","Rainfall_gauge"],
+            columns=["Country", "Rainfall_gauge"],
             key_on="feature.properties.ADMIN",
             fill_color="Set2",
             fill_opacity=0.7,
@@ -486,9 +522,6 @@ def malaria_rainfall_map_view(request):
             reset=True,
 
         ).add_to(map_demo)
-
-
-
 
         folium.LayerControl().add_to(map_demo)
         map_demo.save("malaria/malaria_rainfall_map.html")
@@ -503,12 +536,10 @@ def malaria_rainfall_map_view(request):
             name_list.append(m.Country)
             pop_map_list.append(m.Population_at_risk)
 
-
         latlon = zip(name_list, pop_map_list)
         zipped_latlon = list(latlon)
 
         df = pd.DataFrame(data=zipped_latlon, columns=['Country', 'Population_at_risk'])
-
 
         map_demo = folium.Map(min_zoom=2, max_bounds=True,
                               tiles='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery'
@@ -549,12 +580,10 @@ def malaria_rainfall_map_view(request):
             name_list.append(m.Country)
             case_map_list.append(m.Cases)
 
-
         latlon = zip(name_list, case_map_list)
         zipped_latlon = list(latlon)
 
         df = pd.DataFrame(data=zipped_latlon, columns=['Country', 'Cases'])
-
 
         map_demo = folium.Map(min_zoom=2, max_bounds=True,
                               tiles='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery'
@@ -593,9 +622,9 @@ def malaria_rainfall_map_view(request):
     return render(request, 'malaria/malaria_rainfall_map.html')
 
 
-
 def malaria_socioeconomic_factor_view(request):
     return render(request, 'malaria/malaria_socioeconomic_factor.html')
+
 
 def malaria_gdp_per_capita_view(request):
     if request.GET.get("GraphType") == "Scatterplot":
@@ -621,22 +650,21 @@ def malaria_gdp_per_capita_view(request):
             gdp_list.append(gdp)
 
         # Line graph for gdp per capita over the years
-        year_list_gdp = ['2010','2011','2012','2013','2014','2015', '2016', '2017', '2018']
+        year_list_gdp = ['2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018']
         plot_gdp = figure(title="GDP per capita in " + country_filter, x_range=year_list_gdp,
-                       plot_width=800, plot_height=400)
+                          plot_width=800, plot_height=400)
         plot_gdp.left[0].formatter.use_scientific = False
         plot_gdp.line(year_list_gdp, gdp_list, line_width=2)
-        script_gdp,div_gdp = components(plot_gdp)
-
+        script_gdp, div_gdp = components(plot_gdp)
 
         # Scatter plot for population at risk vs gdp
         x_scatter_gdp = gdp_list
         y_scatter_pop = population_list
 
         scatter_plot_1 = figure(plot_width=700, plot_height=700, x_axis_label='GDP per capita',
-                              y_axis_label='Number of population at risk in ' + country_filter)
+                                y_axis_label='Number of population at risk in ' + country_filter)
         scatter_plot_1.circle(x_scatter_gdp, y_scatter_pop, size=10, line_color="navy", fill_color="orange",
-                            fill_alpha=0.5)
+                              fill_alpha=0.5)
         scatter_plot_1.left[0].formatter.use_scientific = False
 
         # Best-fit Line for population at risk vs gdp
@@ -700,11 +728,10 @@ def malaria_gdp_per_capita_view(request):
         scatter_plot_3.line(x, y_predicted_death, color='red')
         script_death, div_death = components(scatter_plot_3)
 
-        context = {'Malaria': result, 'script_pop': script_pop, 'div_pop': div_pop, 'script_case': script_case, 'div_case': div_case,
-                   'script_death': script_death, 'div_death': div_death, 'script_gdp': script_gdp,'div_gdp': div_gdp
+        context = {'Malaria': result, 'script_pop': script_pop, 'div_pop': div_pop, 'script_case': script_case,
+                   'div_case': div_case,
+                   'script_death': script_death, 'div_death': div_death, 'script_gdp': script_gdp, 'div_gdp': div_gdp
                    }
-
-
 
         return render(request, 'malaria/malaria_gdp_per_capita.html', context)
     elif request.GET.get("GraphType") == "Map":
@@ -736,22 +763,22 @@ def malaria_pct_agri_pop_view(request):
             pct_list.append(pct)
 
         # Line graph for percentage of agricultural population over the years
-        year_list_pct = ['2010','2011','2012','2013','2014','2015', '2016', '2017', '2018']
+        year_list_pct = ['2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018']
         plot_pct = figure(title="GDP per capita in " + country_filter, x_range=year_list_pct,
-                       plot_width=800, plot_height=400)
+                          plot_width=800, plot_height=400)
         plot_pct.left[0].formatter.use_scientific = False
         plot_pct.line(year_list_pct, pct_list, line_width=2)
-        script_pct,div_pct = components(plot_pct)
-
+        script_pct, div_pct = components(plot_pct)
 
         # Scatter plot for population at risk vs percentage of agricultural population
         x_scatter_pct = pct_list
         y_scatter_pop = population_list
 
-        scatter_plot_1 = figure(plot_width=700, plot_height=700, x_axis_label='Percentage of Agricultural Population (Percentage)',
-                              y_axis_label='Number of population at risk in ' + country_filter)
+        scatter_plot_1 = figure(plot_width=700, plot_height=700,
+                                x_axis_label='Percentage of Agricultural Population (Percentage)',
+                                y_axis_label='Number of population at risk in ' + country_filter)
         scatter_plot_1.circle(x_scatter_pct, y_scatter_pop, size=10, line_color="navy", fill_color="orange",
-                            fill_alpha=0.5)
+                              fill_alpha=0.5)
         scatter_plot_1.left[0].formatter.use_scientific = False
 
         # Best-fit Line for population at risk vs gdp
@@ -772,7 +799,8 @@ def malaria_pct_agri_pop_view(request):
         x_scatter_pct = pct_list
         y_scatter_case = cases_list
 
-        scatter_plot_2 = figure(plot_width=700, plot_height=700, x_axis_label='Percentage of Agricultural Population (Percentage)',
+        scatter_plot_2 = figure(plot_width=700, plot_height=700,
+                                x_axis_label='Percentage of Agricultural Population (Percentage)',
                                 y_axis_label='Number of cases in ' + country_filter)
         scatter_plot_2.circle(x_scatter_pct, y_scatter_case, size=10, line_color="navy", fill_color="orange",
                               fill_alpha=0.5)
@@ -796,7 +824,8 @@ def malaria_pct_agri_pop_view(request):
         x_scatter_pct = pct_list
         y_scatter_death = deaths_list
 
-        scatter_plot_3 = figure(plot_width=700, plot_height=700, x_axis_label='Percentage of Agricultural Population (Percentage)',
+        scatter_plot_3 = figure(plot_width=700, plot_height=700,
+                                x_axis_label='Percentage of Agricultural Population (Percentage)',
                                 y_axis_label='Number of deaths in ' + country_filter)
         scatter_plot_3.circle(x_scatter_pct, y_scatter_death, size=10, line_color="navy", fill_color="orange",
                               fill_alpha=0.5)
@@ -815,14 +844,12 @@ def malaria_pct_agri_pop_view(request):
         scatter_plot_3.line(x, y_predicted_death, color='red')
         script_death, div_death = components(scatter_plot_3)
 
-        context = {'Malaria': result, 'script_pop': script_pop, 'div_pop': div_pop, 'script_case': script_case, 'div_case': div_case,
-                   'script_death': script_death, 'div_death': div_death, 'script_gdp': script_pct,'div_gdp': div_pct
+        context = {'Malaria': result, 'script_pop': script_pop, 'div_pop': div_pop, 'script_case': script_case,
+                   'div_case': div_case,
+                   'script_death': script_death, 'div_death': div_death, 'script_gdp': script_pct, 'div_gdp': div_pct
                    }
-
-
 
         return render(request, 'malaria/malaria_pct_agri_pop.html', context)
     elif request.GET.get("GraphType") == "Map":
         return render(request, 'malaria/malaria_pct_agri_pop.html')
     return render(request, 'malaria/malaria_pct_agri_pop.html')
-
