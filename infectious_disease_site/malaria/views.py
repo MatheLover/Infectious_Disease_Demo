@@ -497,6 +497,7 @@ def malaria_rainfall_map_view(request):
 
         df = pd.DataFrame(data=zipped_latlon, columns=['Country', 'Rainfall_gauge'])
 
+
         map_demo = folium.Map(min_zoom=2, max_bounds=True,
                               tiles='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery'
                                     '/MapServer/tile/{z}/{y}/{x}', attr='My Map Data Attribution')
@@ -517,7 +518,7 @@ def malaria_rainfall_map_view(request):
             fill_color="Set2",
             fill_opacity=0.7,
             line_opacity=0.2,
-            legend_name="Annual Rainfall (mm) Gauge",
+            legend_name="Annual Rainfall Gauge (mm)",
             bins=6,
             reset=True,
 
@@ -540,6 +541,7 @@ def malaria_rainfall_map_view(request):
         zipped_latlon = list(latlon)
 
         df = pd.DataFrame(data=zipped_latlon, columns=['Country', 'Population_at_risk'])
+        df['Population_at_risk'] = np.log10(df['Population_at_risk'])
 
         map_demo = folium.Map(min_zoom=2, max_bounds=True,
                               tiles='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery'
@@ -561,7 +563,7 @@ def malaria_rainfall_map_view(request):
             fill_color="Set2",
             fill_opacity=0.7,
             line_opacity=0.2,
-            legend_name="Population at risk",
+            legend_name="Population at risk in log scale",
             bins=6,
             reset=True,
 
@@ -584,6 +586,7 @@ def malaria_rainfall_map_view(request):
         zipped_latlon = list(latlon)
 
         df = pd.DataFrame(data=zipped_latlon, columns=['Country', 'Cases'])
+
 
         map_demo = folium.Map(min_zoom=2, max_bounds=True,
                               tiles='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery'
