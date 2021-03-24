@@ -478,6 +478,9 @@ def malaria_environmental_factor_view(request):
 def malaria_rainfall_view(request):
     return render(request, 'malaria/malaria_rainfall.html')
 
+def malaria_rainfall_scatterplot_view(request):
+    return render(request, 'malaria/malaria_rainfall_scatterplot.html')
+
 
 def malaria_rainfall_map_view(request):
     rainfall_list = []
