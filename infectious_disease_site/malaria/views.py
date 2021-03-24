@@ -890,7 +890,10 @@ def malaria_gdp_per_capita_view(request):
 def malaria_pct_agri_pop_view(request):
     if request.GET.get("GraphType") == "Scatterplot":
         country_filter = request.GET.get("Country")
-        result = Malaria.objects.filter(Q(Country=country_filter))
+        if country_filter != "World":
+            result = Malaria.objects.filter(Q(Country=country_filter))
+        else:
+            result = Malaria.objects.all()
 
         # Prepare data for the graphs
         population_list = []
@@ -998,8 +1001,103 @@ def malaria_pct_agri_pop_view(request):
                    }
 
         return render(request, 'malaria/malaria_pct_agri_pop.html', context)
-    elif request.GET.get("GraphType") == "Map":
+    elif request.GET.get("GraphType") == "Choropleth Map":
+        obtained_country = request.GET.get("Country")
+        slider_name_list = []
+        slider_agri_pop_list = []
+        slider_lat_list = []
+        slider_lon_list = []
+        slider_year_list = []
 
+        if obtained_country == "World":
+            for m in Malaria.objects.all():
+                slider_lat_list.append(m.Latitude)
+                slider_lon_list.append(m.Longitude)
+                slider_name_list.append(m.Country)
+                slider_agri_pop_list.append(m.Rural_pop_pct)
+                year = str(m.Year)
+                if year != '2010':
+                    year = year + '/12/31'
+                slider_year_list.append(year)
 
-        return render(request, 'malaria/malaria_pct_agri_pop.html')
+        else:
+            for m in Malaria.objects.filter(Country=obtained_country):
+                slider_lat_list.append(m.Latitude)
+                slider_lon_list.append(m.Longitude)
+                slider_name_list.append(m.Country)
+                slider_agri_pop_list.append(m.Rural_pop_pct)
+                year = str(m.Year)
+                if year != '2010':
+                    year = year + '/12/31'
+                slider_year_list.append(year)
+
+        country_case = zip(slider_name_list, slider_agri_pop_list, slider_year_list)
+        slider_zipped_country_case = list(country_case)
+        df_slider = pd.DataFrame(data=slider_zipped_country_case, columns=['Country', 'Rural_pop_pct', 'Year'])
+        df_slider = df_slider[df_slider.Rural_pop_pct != 0]
+
+        # sorting
+        sorted_df = df_slider.sort_values(['Country',
+                                           'Year']).reset_index(drop=True)
+
+        # Combine data with the file
+        country = gpd.read_file("/Users/benchiang/Desktop/countries.geojson")
+        country = country.rename(columns={'ADMIN': 'Country'})
+        combined_df = sorted_df.merge(country, on='Country')
+        # print(combined_df)
+
+        # Use Log to plot the cases
+        # combined_df['log_cases'] = np.log10(combined_df['Cases'])
+        # combined_df = combined_df[['Country', 'log_cases', 'Year', 'geometry']]
+        # print(combined_df)
+
+        combined_df['Year'] = pd.to_datetime(combined_df['Year']).astype(int) / 10 ** 9
+        combined_df['Year'] = combined_df['Year'].astype(int).astype(str)
+
+        # Construct color map
+        max_color = max(combined_df['Rural_pop_pct'])
+        min_color = min(combined_df['Rural_pop_pct'])
+        color_map = cm.linear.YlOrRd_09.scale(min_color, max_color)
+        combined_df['color'] = combined_df['Rural_pop_pct'].map(color_map)
+        # print(combined_df)
+
+        # Construct style dictionary
+        unique_country_list = combined_df['Country'].unique().tolist()
+        ctry_index = range(len(unique_country_list))
+
+        style_dic = {}
+        for j in ctry_index:
+            ctry = unique_country_list[j]
+            country = combined_df[combined_df['Country'] == ctry]
+            in_dic = {
+
+            }
+            for _, r in country.iterrows():
+                in_dic[r['Year']] = {'color': r['color'], 'opacity': 0.8}
+            style_dic[str(j)] = in_dic
+
+        # Make a dataframe containing each country
+        specific_ctry = combined_df[['geometry']]
+        ctry_gdf = gpd.GeoDataFrame(specific_ctry)
+        ctry_gdf = ctry_gdf.drop_duplicates().reset_index()
+
+        # Create a slider map
+        from folium.plugins import TimeSliderChoropleth
+        m = folium.Map(min_zoom=2, max_bounds=True, tiles='cartodbpositron')
+
+        # Plot Slider Map
+        _ = TimeSliderChoropleth(
+            data=ctry_gdf.to_json(),
+            styledict=style_dic,
+        ).add_to(m)
+        _ = color_map.add_to(m)
+        color_map.caption = "Percentage of Agricultural Population in " + obtained_country
+
+        m.save("malaria/malaria_pct_agri_pop.html")
+        m = m._repr_html_()
+        context = {
+            'm': m
+        }
+
+        return render(request, 'malaria/malaria_pct_agri_pop.html', context)
     return render(request, 'malaria/malaria_pct_agri_pop.html')
