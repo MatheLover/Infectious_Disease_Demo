@@ -484,9 +484,10 @@ def malaria_rainfall_map_view(request):
     name_list = []
     case_map_list = []
     pop_map_list = []
+    obtained_year = request.GET.get("Year")
     if request.GET.get("Feature") == "Rainfall_gauge":
 
-        for m in Malaria.objects.filter(Year=2010):
+        for m in Malaria.objects.filter(Year=obtained_year):
             name_list.append(m.Country)
             case_map_list.append(m.Cases)
             pop_map_list.append(m.Population_at_risk)
@@ -533,7 +534,7 @@ def malaria_rainfall_map_view(request):
         return render(request, 'malaria/malaria_rainfall_map.html', context)
 
     elif request.GET.get("Feature") == "Population_at_risk":
-        for m in Malaria.objects.filter(Year=2010):
+        for m in Malaria.objects.filter(Year=obtained_year):
             name_list.append(m.Country)
             pop_map_list.append(m.Population_at_risk)
 
@@ -578,7 +579,7 @@ def malaria_rainfall_map_view(request):
         return render(request, 'malaria/malaria_rainfall_map.html', context)
 
     else:
-        for m in Malaria.objects.filter(Year=2010):
+        for m in Malaria.objects.filter(Year=obtained_year):
             name_list.append(m.Country)
             case_map_list.append(m.Cases)
 
@@ -588,9 +589,7 @@ def malaria_rainfall_map_view(request):
         df = pd.DataFrame(data=zipped_latlon, columns=['Country', 'Cases'])
 
 
-        map_demo = folium.Map(min_zoom=2, max_bounds=True,
-                              tiles='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery'
-                                    '/MapServer/tile/{z}/{y}/{x}', attr='My Map Data Attribution')
+        map_demo = folium.Map(min_zoom=2, max_bounds=True, tiles='cartodbpositron')
 
         geojson = "/Users/benchiang/Desktop/countries.geojson"
         g = folium.GeoJson(
