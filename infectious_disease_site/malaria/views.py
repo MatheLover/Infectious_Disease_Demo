@@ -479,6 +479,49 @@ def malaria_rainfall_view(request):
     return render(request, 'malaria/malaria_rainfall.html')
 
 def malaria_rainfall_scatterplot_view(request):
+    if request.GET.get("Location"):
+        continent_filter = request.GET.get("Location")
+        result = Malaria.objects.filter(WHO_region=continent_filter)
+
+        # Prepare data for the graphs
+        population_list = []
+        cases_list = []
+        rainfall_list = []
+
+        for population in result.values_list('Population_at_risk'):
+            population_list.append(population)
+
+        for case in result.values_list('Cases'):
+            cases_list.append(case)
+
+
+        for rainfall in result.values_list('Rainfall_gauge'):
+            rainfall_list.append(rainfall)
+
+        x_scatter_rainfall = rainfall_list
+        # Scatter plot for population at risk vs annual rainfall gauge
+        y_scatter_pop = population_list
+        scatter_plot_pop_rainfall = figure(plot_width=700, plot_height=700, x_axis_label='Annual Rainfall Gauge ',
+                                y_axis_label='Number of population at risk in ' + continent_filter)
+        scatter_plot_pop_rainfall.circle(x_scatter_rainfall, y_scatter_pop, size=10, line_color="navy", fill_color="orange",
+                              fill_alpha=0.5)
+        scatter_plot_pop_rainfall.left[0].formatter.use_scientific = False
+        script_pop_rainfall,div_pop_rainfall = components(scatter_plot_pop_rainfall)
+
+        # Scatter plot for cases vs annual rainfall gauge
+        y_scatter_case = cases_list
+        scatter_plot_case_rainfall = figure(plot_width=700, plot_height=700, x_axis_label='Annual Rainfall Gauge ',
+                                       y_axis_label='Number of cases in ' + continent_filter)
+        scatter_plot_case_rainfall.circle(x_scatter_rainfall, y_scatter_case, size=10, line_color="navy", fill_color="orange",
+                                     fill_alpha=0.5)
+        scatter_plot_case_rainfall.left[0].formatter.use_scientific = False
+        script_case_rainfall,div_case_rainfall = components(scatter_plot_case_rainfall)
+
+        context = {'Malaria': result, 'script_pop_rainfall': script_pop_rainfall,
+                   'div_pop_rainfall': div_pop_rainfall,
+                   'script_case_rainfall': script_case_rainfall, 'div_case_rainfall': div_case_rainfall}
+
+        return render(request, 'malaria/malaria_rainfall_scatterplot.html', context)
     return render(request, 'malaria/malaria_rainfall_scatterplot.html')
 
 
