@@ -35,7 +35,8 @@ def malaria_home_view(request):
         cases_list = []
         deaths_list = []
 
-        for population in result.values_list('Population_at_risk'):
+
+        for population in result.values_list('Population_at_risk', flat=True):
             population_list.append(population)
 
         for case in result.values_list('Cases'):
@@ -43,6 +44,8 @@ def malaria_home_view(request):
 
         for death in result.values_list('Deaths'):
             deaths_list.append(death)
+
+
 
         plot1 = figure(title="Number of Population at Risk by Year in " + country_filter, x_range=year_list,
                        plot_width=800, plot_height=400)
