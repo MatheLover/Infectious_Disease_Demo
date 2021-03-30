@@ -35,7 +35,6 @@ def malaria_home_view(request):
         cases_list = []
         deaths_list = []
 
-
         for population in result.values_list('Population_at_risk', flat=True):
             population_list.append(population)
 
@@ -44,8 +43,6 @@ def malaria_home_view(request):
 
         for death in result.values_list('Deaths'):
             deaths_list.append(death)
-
-
 
         plot1 = figure(title="Number of Population at Risk by Year in " + country_filter, x_range=year_list,
                        plot_width=800, plot_height=400)
@@ -111,8 +108,8 @@ def malaria_annual_stat_map_view(request):
         for co in zipped_latlon:
             html = """Country: """ + co[2] \
                    + """<br>Case Number in """ + str(co[6]) + """: """ + str(co[3]) \
-                   + """<br>Deaths """ + str(co[6]) + """: """ + str(co[4]) \
-                   + """<br>Population at risk """ + str(co[6]) + """: """ + str(co[5])
+                   + """<br>Deaths in """ + str(co[6]) + """: """ + str(co[4]) \
+                   + """<br>Population at risk in """ + str(co[6]) + """: """ + str(co[5])
 
             iframe = folium.IFrame(html,
                                    width=400,
@@ -481,6 +478,7 @@ def malaria_environmental_factor_view(request):
 def malaria_rainfall_view(request):
     return render(request, 'malaria/malaria_rainfall.html')
 
+
 def malaria_rainfall_scatterplot_view(request):
     if request.GET.get("Location"):
         continent_filter = request.GET.get("Location")
@@ -497,7 +495,6 @@ def malaria_rainfall_scatterplot_view(request):
         for case in result.values_list('Cases'):
             cases_list.append(case)
 
-
         for rainfall in result.values_list('Rainfall_gauge'):
             rainfall_list.append(rainfall)
 
@@ -505,20 +502,22 @@ def malaria_rainfall_scatterplot_view(request):
         # Scatter plot for population at risk vs annual rainfall gauge
         y_scatter_pop = population_list
         scatter_plot_pop_rainfall = figure(plot_width=700, plot_height=700, x_axis_label='Annual Rainfall Gauge ',
-                                y_axis_label='Number of population at risk in ' + continent_filter)
-        scatter_plot_pop_rainfall.circle(x_scatter_rainfall, y_scatter_pop, size=10, line_color="navy", fill_color="orange",
-                              fill_alpha=0.5)
+                                           y_axis_label='Number of population at risk in ' + continent_filter)
+        scatter_plot_pop_rainfall.circle(x_scatter_rainfall, y_scatter_pop, size=10, line_color="navy",
+                                         fill_color="orange",
+                                         fill_alpha=0.5)
         scatter_plot_pop_rainfall.left[0].formatter.use_scientific = False
-        script_pop_rainfall,div_pop_rainfall = components(scatter_plot_pop_rainfall)
+        script_pop_rainfall, div_pop_rainfall = components(scatter_plot_pop_rainfall)
 
         # Scatter plot for cases vs annual rainfall gauge
         y_scatter_case = cases_list
         scatter_plot_case_rainfall = figure(plot_width=700, plot_height=700, x_axis_label='Annual Rainfall Gauge ',
-                                       y_axis_label='Number of cases in ' + continent_filter)
-        scatter_plot_case_rainfall.circle(x_scatter_rainfall, y_scatter_case, size=10, line_color="navy", fill_color="orange",
-                                     fill_alpha=0.5)
+                                            y_axis_label='Number of cases in ' + continent_filter)
+        scatter_plot_case_rainfall.circle(x_scatter_rainfall, y_scatter_case, size=10, line_color="navy",
+                                          fill_color="orange",
+                                          fill_alpha=0.5)
         scatter_plot_case_rainfall.left[0].formatter.use_scientific = False
-        script_case_rainfall,div_case_rainfall = components(scatter_plot_case_rainfall)
+        script_case_rainfall, div_case_rainfall = components(scatter_plot_case_rainfall)
 
         context = {'Malaria': result, 'script_pop_rainfall': script_pop_rainfall,
                    'div_pop_rainfall': div_pop_rainfall,
@@ -546,7 +545,6 @@ def malaria_rainfall_map_view(request):
         zipped_latlon = list(latlon)
 
         df = pd.DataFrame(data=zipped_latlon, columns=['Country', 'Rainfall_gauge'])
-
 
         map_demo = folium.Map(min_zoom=2, max_bounds=True,
                               tiles='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery'
@@ -636,7 +634,6 @@ def malaria_rainfall_map_view(request):
         zipped_latlon = list(latlon)
 
         df = pd.DataFrame(data=zipped_latlon, columns=['Country', 'Cases'])
-
 
         map_demo = folium.Map(min_zoom=2, max_bounds=True, tiles='cartodbpositron')
 
