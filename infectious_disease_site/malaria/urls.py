@@ -23,6 +23,7 @@ urlpatterns = [
          name='malaria_socioeconomic_factor'),
 
     path('malaria_gdp_per_capita.html', views.malaria_gdp_per_capita_view, name='malaria_gdp_per_capita'),
-    path('malaria_pct_agri_pop.html', views.malaria_pct_agri_pop_view, name='malaria_pct_agri_pop')
+    path('malaria_pct_agri_pop.html', views.malaria_pct_agri_pop_view, name='malaria_pct_agri_pop'),
+    path('malaria_about.html', views.malaria_about_view, name='malaria_about')
 
 ]

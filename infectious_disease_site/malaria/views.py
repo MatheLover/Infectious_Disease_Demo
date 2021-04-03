@@ -1101,3 +1101,6 @@ def malaria_pct_agri_pop_view(request):
 
         return render(request, 'malaria/malaria_pct_agri_pop.html', context)
     return render(request, 'malaria/malaria_pct_agri_pop.html')
+
+def malaria_about_view(request):
+    return render(request, 'malaria/malaria_about.html')
