@@ -44,7 +44,7 @@ def malaria_home_view(request):
         for case in result.values_list('Cases', flat=True):
             cases_list.append(case)
 
-        for death in result.values_list('Deaths'):
+        for death in result.values_list('Deaths', flat=True):
             deaths_list.append(death)
 
         source = ColumnDataSource(data=dict(
@@ -70,10 +70,18 @@ def malaria_home_view(request):
         plot2.vbar(x='x', width=0.5, bottom=0, top='y', color="firebrick",source=source)
 
 
+        source = ColumnDataSource(data=dict(
+            x=year_list,
+            y=deaths_list,
+        ))
+        TOOLTIPS = [
+            ("Deaths", "@y{int}"),
+        ]
         plot3 = figure(title="Number of Estimated Deaths by Year in " + country_filter, x_range=year_list,
-                       plot_width=800, plot_height=400)
+                       plot_width=800, plot_height=400,tooltips=TOOLTIPS)
         plot3.left[0].formatter.use_scientific = False
         plot3.line(year_list, deaths_list, line_width=2)
+        plot3.circle('x', 'y', size=20, source=source)
 
         script1, div1 = components(plot1)
         script2, div2 = components(plot2)

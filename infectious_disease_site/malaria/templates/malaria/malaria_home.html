@@ -54,7 +54,8 @@
 
     </div>
 
-    <hr/>
+    <h1>Please Use the selector to query malaria disease information</h1>
+    <br><br>
     <!--Select Country, starting year, and end year -->
     <form action="{% url 'malaria_home' %}" onsubmit="return validateInput()" method="get">
      <select id="Country" name="Country" >
@@ -336,35 +337,35 @@
      <input type="submit" value="Submit Query"/>
      <input type="button" id="buttonReset" value="Reset" onclick="resetFilter();" />
     </form>
-    <hr>
+    <br><br>
 
 
-    <table border="1">
-       <tr>
-         <td>Region</td>
-         <td>Country</td>
-         <td>Year</td>
-         <td>Population at risk</td>
-         <td>Case Number</td>
-         <td>Deaths</td>
-       </tr>
+<!--    <table border="1">-->
+<!--       <tr>-->
+<!--         <td>Region</td>-->
+<!--         <td>Country</td>-->
+<!--         <td>Year</td>-->
+<!--         <td>Population at risk</td>-->
+<!--         <td>Case Number</td>-->
+<!--         <td>Deaths</td>-->
+<!--       </tr>-->
 
-     {% for result in Malaria %}
-     <tr>
-      <td>{{result.WHO_region}}</td>
-      <td>{{result.Country}}</td>
-      <td>{{result.Year}}</td>
-      <td>{{result.Population_at_risk}}</td>
-      <td>{{result.Cases}}</td>
-      <td>{{result.Deaths}}</td>
-     </tr>
-     {% endfor %}
-     </table>
+<!--     {% for result in Malaria %}-->
+<!--     <tr>-->
+<!--      <td>{{result.WHO_region}}</td>-->
+<!--      <td>{{result.Country}}</td>-->
+<!--      <td>{{result.Year}}</td>-->
+<!--      <td>{{result.Population_at_risk}}</td>-->
+<!--      <td>{{result.Cases}}</td>-->
+<!--      <td>{{result.Deaths}}</td>-->
+<!--     </tr>-->
+<!--     {% endfor %}-->
+<!--     </table>-->
     {{div1| safe}}
     {{div2| safe}}
     {{div3| safe}}
 
-    <hr/>
+
 
 
 
