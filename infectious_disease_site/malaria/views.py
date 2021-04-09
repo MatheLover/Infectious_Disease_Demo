@@ -505,22 +505,23 @@ def malaria_rainfall_view(request):
 
 
 def malaria_rainfall_scatterplot_view(request):
-    if request.GET.get("Location"):
+    if request.GET.get("Location") and request.GET.get("Year"):
+        year_filter = request.GET.get("Year")
         continent_filter = request.GET.get("Location")
-        result = Malaria.objects.filter(WHO_region=continent_filter)
+        result = Malaria.objects.filter(Q(WHO_region=continent_filter) & Q(Year=year_filter))
 
         # Prepare data for the graphs
         population_list = []
         cases_list = []
         rainfall_list = []
 
-        for population in result.values_list('Population_at_risk'):
+        for population in result.values_list('Population_at_risk',flat=True):
             population_list.append(population)
 
-        for case in result.values_list('Cases'):
+        for case in result.values_list('Cases',flat=True):
             cases_list.append(case)
 
-        for rainfall in result.values_list('Rainfall_gauge'):
+        for rainfall in result.values_list('Rainfall_gauge', flat=True):
             rainfall_list.append(rainfall)
 
         x_scatter_rainfall = rainfall_list
@@ -532,7 +533,22 @@ def malaria_rainfall_scatterplot_view(request):
                                          fill_color="orange",
                                          fill_alpha=0.5)
         scatter_plot_pop_rainfall.left[0].formatter.use_scientific = False
+
+        # Regresssion for population at risk vs annual rainfall gauge
+        d = pandas.DataFrame(x_scatter_rainfall)
+        d1 = pandas.DataFrame(y_scatter_pop)
+        x = np.array(d[0])
+        y = np.array(d1[0])
+
+        par = np.polyfit(x, y, 1, full=True)
+        slope = par[0][0]
+        intercept = par[0][1]
+        y_predicted_pop = [slope * i + intercept for i in x]
+        scatter_plot_pop_rainfall.line(x, y_predicted_pop, color='blue')
+
         script_pop_rainfall, div_pop_rainfall = components(scatter_plot_pop_rainfall)
+
+
 
         # Scatter plot for cases vs annual rainfall gauge
         y_scatter_case = cases_list
@@ -542,6 +558,18 @@ def malaria_rainfall_scatterplot_view(request):
                                           fill_color="orange",
                                           fill_alpha=0.5)
         scatter_plot_case_rainfall.left[0].formatter.use_scientific = False
+
+        # Regression for cases vs annual rainfall
+        d = pandas.DataFrame(x_scatter_rainfall)
+        d1 = pandas.DataFrame(y_scatter_case)
+        x = np.array(d[0])
+        y = np.array(d1[0])
+
+        par = np.polyfit(x, y, 1, full=True)
+        slope = par[0][0]
+        intercept = par[0][1]
+        y_predicted_pop = [slope * i + intercept for i in x]
+        scatter_plot_case_rainfall.line(x, y_predicted_pop, color='blue')
         script_case_rainfall, div_case_rainfall = components(scatter_plot_case_rainfall)
 
         context = {'Malaria': result, 'script_pop_rainfall': script_pop_rainfall,
