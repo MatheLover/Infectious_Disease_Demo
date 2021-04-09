@@ -293,6 +293,7 @@ def malaria_cumulative_stat_map_view(request):
         _ = color_map.add_to(m)
         color_map.caption = "Log number of malaria cases"
 
+
         m.save("malaria/malaria_cumulative_stat_map.html")
         m = m._repr_html_()
         context = {

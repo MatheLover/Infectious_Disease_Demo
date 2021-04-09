@@ -20,6 +20,8 @@
             dropdownYear.selectedIndex = 0;
 
        }
+
+
     </script>
 
 </head>
@@ -29,17 +31,21 @@
         <div class="jumbotron">
             <h1>Infectious Disease Visualization System (Malaria)</h1>
             <hr>
-            <a href="http://127.0.0.1:8000/homepage/home.html" class="btn btn-info" role="button">Home</a>
-            <a href="http://127.0.0.1:8000/homepage/about.html" class="btn btn-info" role="button">About</a>
+            <a href="http://127.0.0.1:8000/malaria/malaria_home.html" class="btn btn-info" role="button">Home</a>
+            <a href="http://127.0.0.1:8000/malaria/malaria_about.html" class="btn btn-info" role="button">About</a>
             <a href="http://127.0.0.1:8000/malaria/malaria_map.html" class="btn btn-info" role="button">Malaria
                 Statistics Mapping</a>
-            <a href="http://127.0.0.1:8000/malaria/malaria_environmental_factor.html" class="btn btn-info" role="button">Environmental Factor</a>
-
+            <a href="http://127.0.0.1:8000/malaria/malaria_environmental_factor.html" class="btn btn-info"
+               role="button">Environmental Factor</a>
+            <a href="http://127.0.0.1:8000/malaria/malaria_socioeconomic_factor.html" class="btn btn-info"
+               role="button">Socioeconomic Factor</a>
 
 
         </div>
-
-        <form target="_blank" action="{% url 'malaria_annual_stat_map' %}" onsubmit="return validateInput()" method="get">
+        <h1>Please use the selector to view malaria statistics on a map</h1>
+        <br><br>
+        <form target="_blank" action="{% url 'malaria_annual_stat_map' %}" onsubmit="return validateInput()"
+              method="get">
             <select id="Country" name="Country">
                 <option disabled="true" selected>Select one country or region</option>
                 <option value="World">World</option>
