@@ -1,3 +1,5 @@
+from bokeh.models import HoverTool
+
 from .models import Malaria
 from django.db.models import Q
 from django.shortcuts import render, redirect
@@ -9,6 +11,7 @@ import branca.colormap as cm
 import geopandas as gpd
 import numpy as np
 import pandas
+from bokeh.plotting import ColumnDataSource
 
 from datetime import datetime, timedelta
 
@@ -38,21 +41,34 @@ def malaria_home_view(request):
         for population in result.values_list('Population_at_risk', flat=True):
             population_list.append(population)
 
-        for case in result.values_list('Cases'):
+        for case in result.values_list('Cases', flat=True):
             cases_list.append(case)
 
         for death in result.values_list('Deaths'):
             deaths_list.append(death)
 
+        source = ColumnDataSource(data=dict(
+            x=year_list,
+            y=population_list,
+        ))
+        TOOLTIPS = [
+            ("Population at risk", "@y{int}"),
+        ]
         plot1 = figure(title="Number of Population at Risk by Year in " + country_filter, x_range=year_list,
-                       plot_width=800, plot_height=400)
+                       plot_width=800, plot_height=400,tooltips=TOOLTIPS)
         plot1.left[0].formatter.use_scientific = False
         plot1.line(year_list, population_list, line_width=2)
+        plot1.circle('x','y',size=20, source=source)
 
+
+        data = {'x': year_list,
+                'y': cases_list}
+        source = ColumnDataSource(data=data)
         plot2 = figure(title="Number of Cases by Year in " + country_filter, x_range=year_list, plot_width=800,
-                       plot_height=400)
+                       plot_height=400,tooltips=[("Case Number","@y{int}")])
         plot2.left[0].formatter.use_scientific = False
-        plot2.vbar(year_list, width=0.5, bottom=0, top=cases_list, color="firebrick")
+        plot2.vbar(x='x', width=0.5, bottom=0, top='y', color="firebrick",source=source)
+
 
         plot3 = figure(title="Number of Estimated Deaths by Year in " + country_filter, x_range=year_list,
                        plot_width=800, plot_height=400)
