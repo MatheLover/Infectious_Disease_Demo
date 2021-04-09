@@ -515,6 +515,7 @@ def malaria_rainfall_scatterplot_view(request):
         population_list = []
         cases_list = []
         rainfall_list = []
+        ctry_list = []
 
         for population in result.values_list('Population_at_risk',flat=True):
             population_list.append(population)
@@ -525,9 +526,14 @@ def malaria_rainfall_scatterplot_view(request):
         for rainfall in result.values_list('Rainfall_gauge', flat=True):
             rainfall_list.append(rainfall)
 
+        for country in result.values_list('Country', flat=True):
+            ctry_list.append(country)
+
+
         x_scatter_rainfall = rainfall_list
         # Scatter plot for population at risk vs annual rainfall gauge
         y_scatter_pop = population_list
+
         scatter_plot_pop_rainfall = figure(plot_width=700, plot_height=700, x_axis_label='Annual Rainfall Gauge ',
                                            y_axis_label='Number of population at risk in ' + continent_filter)
         scatter_plot_pop_rainfall.circle(x_scatter_rainfall, y_scatter_pop, size=10, line_color="navy",
@@ -620,7 +626,7 @@ def malaria_rainfall_map_view(request):
         ).add_to(map_demo)
 
         # Choropleth Map 1
-        folium.Choropleth(
+        choro = folium.Choropleth(
             geo_data=geojson,
             name="choropleth",
             data=df,
@@ -634,6 +640,8 @@ def malaria_rainfall_map_view(request):
             reset=True,
 
         ).add_to(map_demo)
+
+        choro.geojson.add_child(folium.features.GeoJsonTooltip(fields=['ADMIN']))
 
         folium.LayerControl().add_to(map_demo)
         map_demo.save("malaria/malaria_rainfall_map.html")
@@ -665,7 +673,7 @@ def malaria_rainfall_map_view(request):
         ).add_to(map_demo)
 
         # Choropleth Map 1
-        folium.Choropleth(
+        choro = folium.Choropleth(
             geo_data=geojson,
             name="choropleth",
             data=df,
@@ -680,6 +688,7 @@ def malaria_rainfall_map_view(request):
 
         ).add_to(map_demo)
 
+        choro.geojson.add_child(folium.features.GeoJsonTooltip(fields=['ADMIN']))
         folium.LayerControl().add_to(map_demo)
         map_demo.save("malaria/malaria_rainfall_map.html")
         map_demo = map_demo._repr_html_()
@@ -707,7 +716,7 @@ def malaria_rainfall_map_view(request):
         ).add_to(map_demo)
 
         # Choropleth Map 1
-        folium.Choropleth(
+        choro = folium.Choropleth(
             geo_data=geojson,
             name="choropleth",
             data=df,
@@ -722,6 +731,7 @@ def malaria_rainfall_map_view(request):
 
         ).add_to(map_demo)
 
+        choro.geojson.add_child(folium.features.GeoJsonTooltip(fields=['ADMIN']))
         folium.LayerControl().add_to(map_demo)
         map_demo.save("malaria/malaria_rainfall_map.html")
         map_demo = map_demo._repr_html_()
