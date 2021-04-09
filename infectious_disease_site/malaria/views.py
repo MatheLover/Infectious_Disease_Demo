@@ -761,24 +761,32 @@ def malaria_gdp_per_capita_view(request):
         deaths_list = []
         gdp_list = []
 
-        for population in result.values_list('Population_at_risk'):
+        for population in result.values_list('Population_at_risk', flat=True):
             population_list.append(population)
 
-        for case in result.values_list('Cases'):
+        for case in result.values_list('Cases', flat=True):
             cases_list.append(case)
 
-        for death in result.values_list('Deaths'):
+        for death in result.values_list('Deaths', flat=True):
             deaths_list.append(death)
 
-        for gdp in result.values_list('GDP_per_capita'):
+        for gdp in result.values_list('GDP_per_capita', flat=True):
             gdp_list.append(gdp)
 
         # Line graph for gdp per capita over the years
         year_list_gdp = ['2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018']
+        source = ColumnDataSource(data=dict(
+            x=year_list_gdp,
+            y=gdp_list,
+        ))
+        TOOLTIPS = [
+            ("GDP per capita", "@y{int}"),
+        ]
         plot_gdp = figure(title="GDP per capita in " + country_filter, x_range=year_list_gdp,
-                          plot_width=800, plot_height=400)
+                          plot_width=800, plot_height=400,tooltips=TOOLTIPS)
         plot_gdp.left[0].formatter.use_scientific = False
         plot_gdp.line(year_list_gdp, gdp_list, line_width=2)
+        plot_gdp.circle('x','y',size=20,source=source)
         script_gdp, div_gdp = components(plot_gdp)
 
         # Scatter plot for population at risk vs gdp

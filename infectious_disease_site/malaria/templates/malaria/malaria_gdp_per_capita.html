@@ -21,6 +21,7 @@
 
        }
 
+
     </script>
 
 </head>
@@ -41,7 +42,8 @@
 
 
         </div>
-
+        <h1>Please use the selector to view scatterplot of malaria vs gdp </h1>
+        <br>
         <form target="_blank" action="{% url 'malaria_gdp_per_capita' %}" onsubmit="return validateInput()"
               method="get">
             <select id="Country" name="Country">
@@ -302,7 +304,7 @@
             <input type="submit" value="Submit Query"/>
             <input type="button" id="buttonReset" value="Reset" onclick="resetFilter();"/>
         </form>
-         {{m | safe}}
+        {{m | safe}}
         {{div_gdp | safe}}
         <br>
         <br>
@@ -315,19 +317,17 @@
         {{div_death | safe}}
 
 
-
-
     </center>
 </div>
 
 
 </body>
-    <script src="http://cdn.pydata.org/bokeh/release/bokeh-2.2.3.min.js" type="text/javascript"></script>
-    <script src="http://cdn.pydata.org/bokeh/release/bokeh-widgets-2.2.3.min.js" type="text/javascript"></script>
-    <script src="http://cdn.pydata.org/bokeh/release/bokeh-tables-2.2.3.min.js" type="text/javascript"></script>
-    <script src="http://cdn.pydata.org/bokeh/release/bokeh-api-2.2.3.min.js" type="text/javascript"></script>
-    {{script_pop | safe}}
-    {{script_case | safe}}
-    {{script_death | safe}}
-    {{script_gdp | safe}}
+<script src="http://cdn.pydata.org/bokeh/release/bokeh-2.2.3.min.js" type="text/javascript"></script>
+<script src="http://cdn.pydata.org/bokeh/release/bokeh-widgets-2.2.3.min.js" type="text/javascript"></script>
+<script src="http://cdn.pydata.org/bokeh/release/bokeh-tables-2.2.3.min.js" type="text/javascript"></script>
+<script src="http://cdn.pydata.org/bokeh/release/bokeh-api-2.2.3.min.js" type="text/javascript"></script>
+{{script_pop | safe}}
+{{script_case | safe}}
+{{script_death | safe}}
+{{script_gdp | safe}}
 </html>
