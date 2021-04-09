@@ -22,6 +22,7 @@
        }
 
 
+
     </script>
 
 </head>
@@ -309,12 +310,21 @@
         <br>
         <br>
         {{div_pop | safe}}
+        {% if r2_gdp_pop != null %}
+        <p>The coefficient of determination is {{ r2_gdp_pop }}</p>
+        {% endif %}
         <br>
         <br>
         {{div_case | safe}}
+        {% if r2_gdp_case != null %}
+        <p>The coefficient of determination is {{ r2_gdp_case }}</p>
+        {% endif %}
         <br>
         <br>
         {{div_death | safe}}
+        {% if r2_gdp_death != null %}
+        <p>The coefficient of determination is {{ r2_gdp_death }}</p>
+        {% endif %}
 
 
     </center>

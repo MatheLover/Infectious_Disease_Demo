@@ -56,20 +56,18 @@ def malaria_home_view(request):
             ("Population at risk", "@y{int}"),
         ]
         plot1 = figure(title="Number of Population at Risk by Year in " + country_filter, x_range=year_list,
-                       plot_width=800, plot_height=400,tooltips=TOOLTIPS)
+                       plot_width=800, plot_height=400, tooltips=TOOLTIPS)
         plot1.left[0].formatter.use_scientific = False
         plot1.line(year_list, population_list, line_width=2)
-        plot1.circle('x','y',size=20, source=source)
-
+        plot1.circle('x', 'y', size=20, source=source)
 
         data = {'x': year_list,
                 'y': cases_list}
         source = ColumnDataSource(data=data)
         plot2 = figure(title="Number of Cases by Year in " + country_filter, x_range=year_list, plot_width=800,
-                       plot_height=400,tooltips=[("Case Number","@y{int}")])
+                       plot_height=400, tooltips=[("Case Number", "@y{int}")])
         plot2.left[0].formatter.use_scientific = False
-        plot2.vbar(x='x', width=0.5, bottom=0, top='y', color="firebrick",source=source)
-
+        plot2.vbar(x='x', width=0.5, bottom=0, top='y', color="firebrick", source=source)
 
         source = ColumnDataSource(data=dict(
             x=year_list,
@@ -79,7 +77,7 @@ def malaria_home_view(request):
             ("Deaths", "@y{int}"),
         ]
         plot3 = figure(title="Number of Estimated Deaths by Year in " + country_filter, x_range=year_list,
-                       plot_width=800, plot_height=400,tooltips=TOOLTIPS)
+                       plot_width=800, plot_height=400, tooltips=TOOLTIPS)
         plot3.left[0].formatter.use_scientific = False
         plot3.line(year_list, deaths_list, line_width=2)
         plot3.circle('x', 'y', size=20, source=source)
@@ -293,7 +291,6 @@ def malaria_cumulative_stat_map_view(request):
         ).add_to(m)
         _ = color_map.add_to(m)
         color_map.caption = "Log number of malaria cases"
-
 
         m.save("malaria/malaria_cumulative_stat_map.html")
         m = m._repr_html_()
@@ -517,10 +514,10 @@ def malaria_rainfall_scatterplot_view(request):
         rainfall_list = []
         ctry_list = []
 
-        for population in result.values_list('Population_at_risk',flat=True):
+        for population in result.values_list('Population_at_risk', flat=True):
             population_list.append(population)
 
-        for case in result.values_list('Cases',flat=True):
+        for case in result.values_list('Cases', flat=True):
             cases_list.append(case)
 
         for rainfall in result.values_list('Rainfall_gauge', flat=True):
@@ -528,7 +525,6 @@ def malaria_rainfall_scatterplot_view(request):
 
         for country in result.values_list('Country', flat=True):
             ctry_list.append(country)
-
 
         x_scatter_rainfall = rainfall_list
         # Scatter plot for population at risk vs annual rainfall gauge
@@ -554,12 +550,9 @@ def malaria_rainfall_scatterplot_view(request):
         scatter_plot_pop_rainfall.line(x, y_predicted_pop, color='blue')
 
         # R^2
-        r2_value_pop = r2_score(y,y_predicted_pop)
-
+        r2_value_pop = r2_score(y, y_predicted_pop)
 
         script_pop_rainfall, div_pop_rainfall = components(scatter_plot_pop_rainfall)
-
-
 
         # Scatter plot for cases vs annual rainfall gauge
         y_scatter_case = cases_list
@@ -590,7 +583,7 @@ def malaria_rainfall_scatterplot_view(request):
         context = {'Malaria': result, 'script_pop_rainfall': script_pop_rainfall,
                    'div_pop_rainfall': div_pop_rainfall,
                    'script_case_rainfall': script_case_rainfall, 'div_case_rainfall': div_case_rainfall,
-                   'r2_value_pop':r2_value_pop, 'r2_value_case':r2_value_case}
+                   'r2_value_pop': r2_value_pop, 'r2_value_case': r2_value_case}
 
         return render(request, 'malaria/malaria_rainfall_scatterplot.html', context)
     return render(request, 'malaria/malaria_rainfall_scatterplot.html')
@@ -783,10 +776,10 @@ def malaria_gdp_per_capita_view(request):
             ("GDP per capita", "@y{int}"),
         ]
         plot_gdp = figure(title="GDP per capita in " + country_filter, x_range=year_list_gdp,
-                          plot_width=800, plot_height=400,tooltips=TOOLTIPS)
+                          plot_width=800, plot_height=400, tooltips=TOOLTIPS)
         plot_gdp.left[0].formatter.use_scientific = False
         plot_gdp.line(year_list_gdp, gdp_list, line_width=2)
-        plot_gdp.circle('x','y',size=20,source=source)
+        plot_gdp.circle('x', 'y', size=20, source=source)
         script_gdp, div_gdp = components(plot_gdp)
 
         # Scatter plot for population at risk vs gdp
@@ -808,8 +801,10 @@ def malaria_gdp_per_capita_view(request):
         par = np.polyfit(x, y, 1, full=True)
         slope = par[0][0]
         intercept = par[0][1]
-        y_predicted_pop = [slope * i + intercept for i in x]
-        scatter_plot_1.line(x, y_predicted_pop, color='red')
+        y_predicted_gdp_pop = [slope * i + intercept for i in x]
+        scatter_plot_1.line(x, y_predicted_gdp_pop, color='red')
+        # R^2
+        r2_gdp_pop = r2_score(y, y_predicted_gdp_pop)
         script_pop, div_pop = components(scatter_plot_1)
 
         ####### Split Line
@@ -834,6 +829,8 @@ def malaria_gdp_per_capita_view(request):
         intercept = par[0][1]
         y_predicted_case = [slope * i + intercept for i in x]
         scatter_plot_2.line(x, y_predicted_case, color='red')
+        # R^2
+        r2_gdp_case = r2_score(y, y_predicted_case)
         script_case, div_case = components(scatter_plot_2)
 
         ####### Split Line
@@ -858,11 +855,14 @@ def malaria_gdp_per_capita_view(request):
         intercept = par[0][1]
         y_predicted_death = [slope * i + intercept for i in x]
         scatter_plot_3.line(x, y_predicted_death, color='red')
+        # R^2
+        r2_gdp_death = r2_score(y, y_predicted_death)
         script_death, div_death = components(scatter_plot_3)
 
         context = {'Malaria': result, 'script_pop': script_pop, 'div_pop': div_pop, 'script_case': script_case,
                    'div_case': div_case,
-                   'script_death': script_death, 'div_death': div_death, 'script_gdp': script_gdp, 'div_gdp': div_gdp
+                   'script_death': script_death, 'div_death': div_death, 'script_gdp': script_gdp, 'div_gdp': div_gdp,
+                   'r2_gdp_pop': r2_gdp_pop, 'r2_gdp_case': r2_gdp_case, 'r2_gdp_death': r2_gdp_death
                    }
 
         return render(request, 'malaria/malaria_gdp_per_capita.html', context)
@@ -982,24 +982,33 @@ def malaria_pct_agri_pop_view(request):
         deaths_list = []
         pct_list = []
 
-        for population in result.values_list('Population_at_risk'):
+        for population in result.values_list('Population_at_risk',flat=True):
             population_list.append(population)
 
-        for case in result.values_list('Cases'):
+        for case in result.values_list('Cases',flat=True):
             cases_list.append(case)
 
-        for death in result.values_list('Deaths'):
+        for death in result.values_list('Deaths',flat=True):
             deaths_list.append(death)
 
-        for pct in result.values_list('Rural_pop_pct'):
+        for pct in result.values_list('Rural_pop_pct',flat=True):
             pct_list.append(pct)
+
 
         # Line graph for percentage of agricultural population over the years
         year_list_pct = ['2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018']
-        plot_pct = figure(title="GDP per capita in " + country_filter, x_range=year_list_pct,
-                          plot_width=800, plot_height=400)
+        source = ColumnDataSource(data=dict(
+            x=year_list_pct,
+            y=pct_list
+        ))
+        TOOLTIPS =[(
+            "Percentage of Agricultural Population","@y{int}"
+        )]
+        plot_pct = figure(title="Percentage of Agricultural Population in " + country_filter, x_range=year_list_pct,
+                          plot_width=800, plot_height=400,tooltips=TOOLTIPS)
         plot_pct.left[0].formatter.use_scientific = False
         plot_pct.line(year_list_pct, pct_list, line_width=2)
+        plot_pct.circle('x','y',size=20,source=source)
         script_pct, div_pct = components(plot_pct)
 
         # Scatter plot for population at risk vs percentage of agricultural population
@@ -1024,6 +1033,8 @@ def malaria_pct_agri_pop_view(request):
         intercept = par[0][1]
         y_predicted_pop = [slope * i + intercept for i in x]
         scatter_plot_1.line(x, y_predicted_pop, color='red')
+        # R^2
+        r2_pop_agri = r2_score(y, y_predicted_pop)
         script_pop, div_pop = components(scatter_plot_1)
 
         ####### Split Line
@@ -1049,6 +1060,8 @@ def malaria_pct_agri_pop_view(request):
         intercept = par[0][1]
         y_predicted_case = [slope * i + intercept for i in x]
         scatter_plot_2.line(x, y_predicted_case, color='red')
+        # R^2
+        r2_case_agri = r2_score(y, y_predicted_case)
         script_case, div_case = components(scatter_plot_2)
 
         ####### Split Line
@@ -1074,11 +1087,15 @@ def malaria_pct_agri_pop_view(request):
         intercept = par[0][1]
         y_predicted_death = [slope * i + intercept for i in x]
         scatter_plot_3.line(x, y_predicted_death, color='red')
+        # R^2
+        r2_death_agri = r2_score(y, y_predicted_death)
         script_death, div_death = components(scatter_plot_3)
 
-        context = {'Malaria': result, 'script_pop': script_pop, 'div_pop': div_pop, 'script_case': script_case,
+        context = {'Malaria': result,'div_pct':div_pct, 'script_pct':script_pct,
+                   'script_pop': script_pop, 'div_pop': div_pop, 'script_case': script_case,
                    'div_case': div_case,
-                   'script_death': script_death, 'div_death': div_death, 'script_gdp': script_pct, 'div_gdp': div_pct
+                   'script_death': script_death, 'div_death': div_death, 'script_gdp': script_pct, 'div_gdp': div_pct,
+                   'r2_pop_agri':r2_pop_agri, 'r2_case_agri':r2_case_agri, 'r2_death_agri':r2_death_agri
                    }
 
         return render(request, 'malaria/malaria_pct_agri_pop.html', context)
@@ -1182,6 +1199,7 @@ def malaria_pct_agri_pop_view(request):
 
         return render(request, 'malaria/malaria_pct_agri_pop.html', context)
     return render(request, 'malaria/malaria_pct_agri_pop.html')
+
 
 def malaria_about_view(request):
     return render(request, 'malaria/malaria_about.html')

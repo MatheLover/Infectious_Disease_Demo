@@ -21,6 +21,7 @@
 
        }
 
+
     </script>
 
 </head>
@@ -41,7 +42,8 @@
 
 
         </div>
-
+        <h1>Please use the selector to view scatterplot of malaria vs agricultural population </h1>
+        <br>
         <form target="_blank" action="{% url 'malaria_pct_agri_pop' %}" onsubmit="return validateInput()"
               method="get">
             <select id="Country" name="Country">
@@ -302,17 +304,27 @@
             <input type="submit" value="Submit Query"/>
             <input type="button" id="buttonReset" value="Reset" onclick="resetFilter();"/>
         </form>
+        <br>
         {{m | safe }}
         {{div_pct | safe}}
         <br>
         <br>
         {{div_pop | safe}}
+        {% if r2_pop_agri != null %}
+        <p>The coefficient of determination is {{ r2_pop_agri }}</p>
+        {% endif %}
         <br>
         <br>
         {{div_case | safe}}
+        {% if r2_case_agri != null %}
+        <p>The coefficient of determination is {{ r2_case_agri }}</p>
+        {% endif %}
         <br>
         <br>
         {{div_death | safe}}
+        {% if r2_death_agri != null %}
+        <p>The coefficient of determination is {{ r2_death_agri }}</p>
+        {% endif %}
 
 
     </center>
@@ -320,12 +332,12 @@
 
 
 </body>
-    <script src="http://cdn.pydata.org/bokeh/release/bokeh-2.2.3.min.js" type="text/javascript"></script>
-    <script src="http://cdn.pydata.org/bokeh/release/bokeh-widgets-2.2.3.min.js" type="text/javascript"></script>
-    <script src="http://cdn.pydata.org/bokeh/release/bokeh-tables-2.2.3.min.js" type="text/javascript"></script>
-    <script src="http://cdn.pydata.org/bokeh/release/bokeh-api-2.2.3.min.js" type="text/javascript"></script>
-    {{script_pop | safe}}
-    {{script_case | safe}}
-    {{script_death | safe}}
-    {{script_pct | safe}}
+<script src="http://cdn.pydata.org/bokeh/release/bokeh-2.2.3.min.js" type="text/javascript"></script>
+<script src="http://cdn.pydata.org/bokeh/release/bokeh-widgets-2.2.3.min.js" type="text/javascript"></script>
+<script src="http://cdn.pydata.org/bokeh/release/bokeh-tables-2.2.3.min.js" type="text/javascript"></script>
+<script src="http://cdn.pydata.org/bokeh/release/bokeh-api-2.2.3.min.js" type="text/javascript"></script>
+{{script_pct | safe}}
+{{script_pop | safe}}
+{{script_case | safe}}
+{{script_death | safe}}
 </html>
