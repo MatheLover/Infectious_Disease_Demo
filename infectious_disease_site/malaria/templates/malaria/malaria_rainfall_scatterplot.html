@@ -20,6 +20,7 @@
 
        }
 
+
     </script>
 
 </head>
@@ -40,6 +41,8 @@
 
         </div>
 
+        <h1>Please use the selector to view scatterplot of malaria vs rainfall </h1>
+        <br>
         <form target="_blank" action="{% url 'malaria_rainfall_scatterplot' %}" onsubmit="return validateInput()"
               method="get">
             <select id="Location" name="Location">
@@ -68,8 +71,14 @@
         </form>
 
         {{ div_pop_rainfall | safe}}
+        {% if r2_value_pop != null %}
+        <p>The coefficient of determination is {{ r2_value_pop }}</p>
+        {% endif %}
         <br>
         {{ div_case_rainfall | safe}}
+        {% if r2_value_case != null %}
+        <p>The coefficient of determination is {{ r2_value_case }}</p>
+        {% endif %}
     </center>
 </div>
 

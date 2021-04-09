@@ -12,6 +12,7 @@ import geopandas as gpd
 import numpy as np
 import pandas
 from bokeh.plotting import ColumnDataSource
+from sklearn.metrics import r2_score
 
 from datetime import datetime, timedelta
 
@@ -546,6 +547,10 @@ def malaria_rainfall_scatterplot_view(request):
         y_predicted_pop = [slope * i + intercept for i in x]
         scatter_plot_pop_rainfall.line(x, y_predicted_pop, color='blue')
 
+        # R^2
+        r2_value_pop = r2_score(y,y_predicted_pop)
+
+
         script_pop_rainfall, div_pop_rainfall = components(scatter_plot_pop_rainfall)
 
 
@@ -570,11 +575,16 @@ def malaria_rainfall_scatterplot_view(request):
         intercept = par[0][1]
         y_predicted_pop = [slope * i + intercept for i in x]
         scatter_plot_case_rainfall.line(x, y_predicted_pop, color='blue')
+
+        # R^2
+        r2_value_case = r2_score(y, y_predicted_pop)
+
         script_case_rainfall, div_case_rainfall = components(scatter_plot_case_rainfall)
 
         context = {'Malaria': result, 'script_pop_rainfall': script_pop_rainfall,
                    'div_pop_rainfall': div_pop_rainfall,
-                   'script_case_rainfall': script_case_rainfall, 'div_case_rainfall': div_case_rainfall}
+                   'script_case_rainfall': script_case_rainfall, 'div_case_rainfall': div_case_rainfall,
+                   'r2_value_pop':r2_value_pop, 'r2_value_case':r2_value_case}
 
         return render(request, 'malaria/malaria_rainfall_scatterplot.html', context)
     return render(request, 'malaria/malaria_rainfall_scatterplot.html')
