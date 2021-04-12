@@ -1,4 +1,5 @@
 from bokeh.models import HoverTool
+from sklearn.metrics import r2_score
 
 from .models import Malaria
 from django.db.models import Q
@@ -12,7 +13,6 @@ import geopandas as gpd
 import numpy as np
 import pandas
 from bokeh.plotting import ColumnDataSource
-from sklearn.metrics import r2_score
 
 from datetime import datetime, timedelta
 
